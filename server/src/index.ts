@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { githubRouter } from './routes/github.js';
 import { geminiRouter } from './routes/gemini.js';
@@ -15,14 +16,26 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === 'production';
 
+// 速率限制：每个IP 15分钟内最多100次请求
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { error: 'Too many requests, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Middleware
-app.use(cors({
-  origin: isProduction
-    ? process.env.ALLOWED_ORIGINS?.split(',') || false
-    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
-  credentials: true
-}));
+// 生产环境：同源部署，不需要CORS
+// 开发环境：前端3000，后端3001，需要CORS
+if (!isProduction) {
+  app.use(cors({
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    credentials: true
+  }));
+}
 app.use(express.json());
+app.use('/api', apiLimiter);
 
 // 安全头
 app.use((req, res, next) => {

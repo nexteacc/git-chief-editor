@@ -12,18 +12,26 @@ const getHeaders = (token: string) => ({
 
 /**
  * 验证 Token 并返回用户信息
+ * 同时检查 Token 是否有 repo 权限
  */
 export const validateToken = async (token: string): Promise<UserProfile> => {
   const response = await fetch(`${GITHUB_API_BASE}/user`, {
     headers: getHeaders(token),
-    cache: 'no-store',
   });
 
   if (!response.ok) {
-    throw new Error('Invalid GitHub Token. Ensure it has "repo" scope (and SSO authorized if needed).');
+    throw new Error('Invalid GitHub Token. Please check your token and try again.');
   }
 
-  return response.json();
+  // 检查 Token 权限
+  const scopes = response.headers.get('X-OAuth-Scopes') || '';
+  const hasRepoAccess = scopes.includes('repo') || scopes.includes('public_repo');
+
+  if (!hasRepoAccess) {
+    throw new Error('Token missing required permissions. Please create a token with "repo" scope.');
+  }
+
+  return response.json() as Promise<UserProfile>;
 };
 
 /**
@@ -42,9 +50,8 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
 
   const prResponse = await fetch(prUrl, {
     headers: getHeaders(token),
-    cache: 'no-store'
   });
-  const prData = prResponse.ok ? await prResponse.json() : { items: [] };
+  const prData = prResponse.ok ? await prResponse.json() as { items?: any[] } : { items: [] };
   const rawPRs = prData.items || [];
 
   console.log(`[GitHub Service] Found ${rawPRs.length} updated PRs.`);
@@ -53,14 +60,13 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
   const reposUrl = `${GITHUB_API_BASE}/user/repos?sort=pushed&direction=desc&per_page=100&type=all`;
   const reposResponse = await fetch(reposUrl, {
     headers: getHeaders(token),
-    cache: 'no-store'
   });
 
   if (!reposResponse.ok) {
     throw new Error('Failed to fetch repository list.');
   }
 
-  const allRepos = await reposResponse.json();
+  const allRepos = await reposResponse.json() as any[];
 
   // 过滤时间窗口内有活动的仓库
   const activeRepos = allRepos.filter((repo: any) => {
@@ -88,11 +94,10 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
       const commitsUrl = `${GITHUB_API_BASE}/repos/${repo.full_name}/commits?author=${username}&since=${isoDate}&per_page=100`;
       const res = await fetch(commitsUrl, {
         headers: getHeaders(token),
-        cache: 'no-store'
       });
 
       if (res.ok) {
-        const commits = await res.json();
+        const commits = await res.json() as any[];
         if (Array.isArray(commits) && commits.length > 0) {
           const repoData = repoMap.get(repo.id);
           if (repoData) {
