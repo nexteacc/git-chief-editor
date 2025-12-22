@@ -1,0 +1,20 @@
+# fly.toml - Fly.io 配置文件
+# 使用 `fly launch` 时会自动生成app名称，或手动修改下面的值
+
+app = 'git-chief-editor'
+primary_region = 'nrt'  # 东京区域，亚洲访问快
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
