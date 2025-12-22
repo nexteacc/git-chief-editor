@@ -1,6 +1,6 @@
 # 提交给 AI 的数据结构说明
 
-本文档详细说明 Git Chief Editor 提交给 Gemini AI 进行总结的数据结构和实际示例。
+本文档详细说明 Today Git Chief Editor 提交给 Gemini AI 进行总结的数据结构和实际示例。
 
 ## 📊 数据流程
 
@@ -130,7 +130,7 @@ const dataInput = activities.map(repo => ({
 实际发送给 Gemini AI 的完整 prompt 如下：
 
 ```
-你是 Git Chief Editor，开发者的个人编辑助手。
+你是 Today Git Chief Editor，开发者的个人编辑助手。
 请分析以下过去24小时的 GitHub 活动数据。
 
 风格：简洁专业。使用商务导向的动词（完成、修复、部署）。聚焦结果，保持简洁。

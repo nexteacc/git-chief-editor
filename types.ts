@@ -63,7 +63,6 @@ export interface DailyReport {
   keyAchievements: string[];
   repoSummaries: GeneratedRepoSummary[];
   style: SummaryStyle;
-  // 每个仓库在时间窗口内的活跃时长（单位：分钟）
   repoDurations?: RepoDuration[];
 }
 

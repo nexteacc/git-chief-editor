@@ -1,63 +1,63 @@
 <div align="center">
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 
-# Git Chief Editor
+# Today Git Chief Editor
 
 **AI-Powered Daily Development Report Generator**
 
-从 GitHub 活动自动生成专业的开发日报
+Automatically generate professional daily reports from your GitHub activity
 
 </div>
 
-## 产品介绍
+## About
 
-Git Chief Editor 是一个 AI 驱动的开发日报生成工具，帮助开发者自动汇总每日工作成果。
+Today Git Chief Editor is an AI-powered tool that helps developers automatically summarize their daily work from GitHub activity.
 
-### 核心功能
+### Features
 
-- **自动获取活动** - 获取过去 24 小时内的 Commits 和 Pull Requests
-- **AI 智能总结** - 使用 Google Gemini AI 生成结构化日报
-- **多种报告风格** - 支持专业、技术、成就三种风格
-- **隐私安全** - GitHub Token 不存储，API Key 仅在后端使用
+- **Auto-fetch Activity** - Retrieves commits and pull requests from the last 24 hours
+- **AI Summary** - Uses Google Gemini AI to generate structured daily reports
+- **Multiple Styles** - Supports Professional, Technical, and Achievement report styles
+- **Privacy First** - GitHub Token is never stored, API Key stays on the server
 
-### 技术栈
+### Tech Stack
 
-| 层级 | 技术 |
-|------|------|
-| 前端 | React + Vite + TypeScript + Tailwind CSS |
-| 后端 | Express + Node.js + TypeScript |
+| Layer | Technology |
+|-------|------------|
+| Frontend | React + Vite + TypeScript + Tailwind CSS |
+| Backend | Express + Node.js + TypeScript |
 | AI | Google Gemini |
 
 ---
 
-## 本地运行
+## Local Development
 
-**环境要求:** Node.js 18+
+**Requirements:** Node.js 18+
 
-1. 安装依赖：
+1. Install dependencies:
    ```bash
    npm install
    cd server && npm install && cd ..
    ```
 
-2. 配置 Gemini API Key：
+2. Configure Gemini API Key:
    ```bash
    echo "GEMINI_API_KEY=your_api_key_here" > server/.env
    ```
 
-3. 启动应用：
+3. Start the app:
    ```bash
    npm run dev:all
    ```
 
-   前端: http://localhost:3000
-   后端: http://localhost:3001
+   Frontend: http://localhost:3000
+   Backend: http://localhost:3001
 
 ---
 
-## 部署
+## Deployment
 
-支持一键部署到 Fly.io：
+Deploy to Fly.io:
 
 ```bash
 fly launch
@@ -67,9 +67,9 @@ fly deploy
 
 ---
 
-## 使用方式
+## Usage
 
-1. 输入 GitHub Personal Access Token（需要 `repo` 权限）
-2. 选择要包含的仓库
-3. 选择报告风格
-4. 生成并导出日报
+1. Enter your GitHub Personal Access Token (requires `repo` scope)
+2. Select repositories to include
+3. Choose a report style
+4. Generate and export your daily report

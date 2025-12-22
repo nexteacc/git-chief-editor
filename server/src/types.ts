@@ -1,5 +1,3 @@
-// 共享类型定义
-
 export enum SummaryStyle {
   PROFESSIONAL = 'PROFESSIONAL',
   TECHNICAL = 'TECHNICAL',
@@ -42,7 +40,6 @@ export interface DailyReport {
   keyAchievements: string[];
   repoSummaries: GeneratedRepoSummary[];
   style: SummaryStyle;
-  // 每个仓库在时间窗口内的活跃时长（单位：分钟）
   repoDurations?: RepoDuration[];
 }
 
@@ -52,7 +49,6 @@ export interface UserProfile {
   name: string;
 }
 
-// API 请求类型
 export interface ValidateTokenRequest {
   token: string;
 }

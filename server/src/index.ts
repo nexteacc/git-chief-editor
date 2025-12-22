@@ -16,7 +16,6 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// 速率限制：每个IP 15分钟内最多100次请求
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -26,8 +25,6 @@ const apiLimiter = rateLimit({
 });
 
 // Middleware
-// 生产环境：同源部署，不需要CORS
-// 开发环境：前端3000，后端3001，需要CORS
 if (!isProduction) {
   app.use(cors({
     origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
@@ -37,7 +34,7 @@ if (!isProduction) {
 app.use(express.json());
 app.use('/api', apiLimiter);
 
-// 安全头
+// Security headers
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -57,12 +54,12 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// 生产环境：托管前端静态文件
+// Serve static files in production
 if (isProduction) {
   const staticPath = path.join(__dirname, '../../dist');
   app.use(express.static(staticPath));
 
-  // SPA fallback - 所有非API请求返回index.html
+  // SPA fallback
   app.get('*', (req, res) => {
     res.sendFile(path.join(staticPath, 'index.html'));
   });

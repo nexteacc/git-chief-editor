@@ -27,7 +27,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onVerify, isLoading, err
               </svg>
             </div>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-2">Git Chief Editor</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-2">Today Git Chief Editor</h1>
           <p className="text-gray-600">An AI-powered daily editor for your GitHub work.</p>
         </div>
 
@@ -47,11 +47,24 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onVerify, isLoading, err
                 placeholder="ghp_..."
                 className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500 transition-all"
               />
-              <div className="mt-2">
-                <p className="text-xs text-gray-500">
-                  We only read your last 24 hours of commits and PR activity. To include private repositories, please ensure your token has the
-                  <code className="mx-1 text-gray-600 bg-gray-100 px-1 py-0.5 rounded border border-gray-200">repo</code>
-                  scope enabled.
+              <div className="mt-3 space-y-2">
+                <p className="text-xs text-gray-600 flex items-center">
+                  <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Only read your last 24 hours of activity
+                </p>
+                <p className="text-xs text-gray-600 flex items-center">
+                  <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Token is never stored on our servers
+                </p>
+                <p className="text-xs text-gray-600 flex items-center">
+                  <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Requires <code className="mx-1 text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">repo</code> scope for private repos
                 </p>
               </div>
             </div>

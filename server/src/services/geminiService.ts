@@ -1,13 +1,10 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { DailyReport, RepoActivity, SummaryStyle, RepoDuration } from '../types.js';
 
-// PR 描述长度上限（避免极端超长描述占满上下文）
 const MAX_PR_BODY_LENGTH = 5000;
-// 每个仓库的保护限制：每个仓库最多 500 条 commits 和 500 条 PRs（防止单个仓库异常大量活动）
 const MAX_COMMITS_PER_REPO = 500;
 const MAX_PRS_PER_REPO = 500;
 
-// JSON 响应 Schema
 const reportSchema: Schema = {
   type: Type.OBJECT,
   properties: {
@@ -51,7 +48,6 @@ export const generateDailyReport = async (
 
   const ai = new GoogleGenAI({ apiKey });
 
-  // 根据风格设置提示
   let styleInstruction = "";
   switch (style) {
     case SummaryStyle.PROFESSIONAL:
@@ -65,14 +61,12 @@ export const generateDailyReport = async (
       break;
   }
 
-  // 按仓库分组，每个仓库单独限制：每个仓库最多 500 条 commits 和 500 条 PRs
   const limitedActivities = activities.map((repo) => ({
     ...repo,
     commits: repo.commits.slice(0, MAX_COMMITS_PER_REPO),
     prs: repo.prs.slice(0, MAX_PRS_PER_REPO),
   }));
 
-  // 提交给 AI 的数据仍然是“按仓库分组”的结构
   const dataInput = limitedActivities.map((repo) => ({
     repo: repo.repoName,
     commits: repo.commits.map((c) => c.message),
@@ -83,7 +77,7 @@ export const generateDailyReport = async (
   }));
 
   const prompt = `
-    你是 Git Chief Editor，开发者的个人编辑助手。
+    你是 Today Git Chief Editor，开发者的个人编辑助手。
     请分析以下过去24小时的 GitHub 活动数据。
 
     ${styleInstruction}
@@ -115,7 +109,6 @@ export const generateDailyReport = async (
     const totalCommits = activities.reduce((acc, r) => acc + r.commits.length, 0);
     const totalPRs = activities.reduce((acc, r) => acc + r.prs.length, 0);
 
-    // 计算每个仓库在时间窗口内的活跃时长（首次提交到最后一次提交的时间差）
     const repoDurations: RepoDuration[] = activities.map((repo) => {
       const commitCount = repo.commits.length;
 
