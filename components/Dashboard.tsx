@@ -60,7 +60,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
       <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-min">
         
         {/* Hero Card - Headline */}
-        <div className="md:col-span-3 bg-white rounded-xl p-8 border border-gray-200 shadow-sm flex flex-col justify-center relative overflow-hidden group">
+        <div className="md:col-span-3 bg-white rounded-xl p-8 border border-gray-200 shadow-sm flex flex-col justify-start relative overflow-hidden group">
            {/* Subtle gradient effect in white/gray */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-gray-100 rounded-full filter blur-3xl transform translate-x-1/2 -translate-y-1/2 opacity-50"></div>
           
@@ -78,10 +78,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
                <h3 className="text-gray-500 text-xs font-mono uppercase tracking-wider mb-2">Activity</h3>
                <div className="text-4xl font-bold text-gray-900">{data.totalCommits + data.totalPRs}</div>
                <div className="text-xs text-gray-400">Items Processed</div>
-               <div className="mt-4 inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono text-emerald-800">
+               <div className="mt-4 inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono text-emerald-800 whitespace-nowrap">
                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
-                 Active time (24h):
-                 <span className="ml-1 font-semibold">{formatDuration(totalActiveMinutes)}</span>
+                 <span>Active: <span className="font-semibold">{formatDuration(totalActiveMinutes)}</span></span>
                </div>
            </div>
            <div className="mt-8 space-y-3">
