@@ -2,14 +2,17 @@ import React from 'react';
 import { DailyReport, SummaryStyle } from '../types';
 import { HighlightListCard } from './ui/card-5';
 import { Sparkles } from 'lucide-react';
+import { User } from '../services/authService';
+import { Header } from './Header';
 
 interface DashboardProps {
   data: DailyReport;
   onReset: () => void;
-  user: { name: string; avatar_url: string };
+  onLogout: () => void;
+  user: User;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, onLogout, user }) => {
 
   const getStyleLabel = (s: SummaryStyle) => {
     switch (s) {
@@ -32,31 +35,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
     data.repoDurations?.reduce((acc, r) => acc + (r.durationMinutes || 0), 0) ?? 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 p-4 md:p-8">
-      {/* Navbar / Header */}
-      <div className="max-w-5xl mx-auto flex justify-between items-center mb-8 border-b border-gray-200 pb-6">
-        <div className="flex items-center space-x-4">
-          <img src={user.avatar_url} alt="User" className="w-10 h-10 rounded-full border border-gray-200 shadow-sm" />
+    <div className="min-h-screen bg-gray-50 text-gray-900">
+      <Header user={user} onLogout={onLogout} />
+
+      <div className="pt-20 px-4 pb-4 md:px-8 md:pb-8">
+        {/* Sub-header with date and actions */}
+        <div className="max-w-5xl mx-auto flex justify-between items-center mb-8 border-b border-gray-200 pb-6">
           <div>
-            <h1 className="font-bold text-lg leading-tight text-gray-900">{user.name || 'Developer'}</h1>
-            <p className="text-xs text-gray-500 font-mono">{data.date}</p>
+            <h1 className="font-bold text-xl text-gray-900">Daily Report</h1>
+            <p className="text-sm text-gray-500 font-mono mt-1">{data.date}</p>
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={onReset}
+              className="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors border border-gray-200 rounded-lg font-medium"
+            >
+              Start Over
+            </button>
           </div>
         </div>
-        <div className="flex space-x-3">
-          <button
-            onClick={onReset}
-            className="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors border border-gray-200 rounded-lg font-medium"
-          >
-            Start Over
-          </button>
-        </div>
-      </div>
 
       {/* Bento Grid */}
-      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 auto-rows-min">
+      <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-min">
 
         {/* Hero Card - Headline */}
-        <div className="md:col-span-3 bg-white rounded-xl p-8 border border-gray-200 shadow-sm flex flex-col justify-start relative overflow-hidden group">
+        <div className="sm:col-span-2 lg:col-span-3 bg-white rounded-xl p-8 border border-gray-200 shadow-sm flex flex-col justify-start relative overflow-hidden group">
           {/* Subtle gradient effect in white/gray */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-gray-100 rounded-full filter blur-3xl transform translate-x-1/2 -translate-y-1/2 opacity-50"></div>
 
@@ -69,7 +72,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
         </div>
 
         {/* Stats Card */}
-        <div className="md:col-span-1 bg-white rounded-xl p-6 border border-gray-200 shadow-sm flex flex-col justify-between">
+        <div className="sm:col-span-2 lg:col-span-1 bg-white rounded-xl p-6 border border-gray-200 shadow-sm flex flex-col justify-between">
           <div>
             <h3 className="text-gray-500 text-xs font-mono uppercase tracking-wider mb-2">Activity</h3>
             <div className="text-4xl font-bold text-gray-900">{data.totalCommits + data.totalPRs}</div>
@@ -98,7 +101,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
         </div>
 
         {/* Key Achievements - using HighlightListCard */}
-        <div className="md:col-span-2">
+        <div className="sm:col-span-2 lg:col-span-2">
           <HighlightListCard
             title="Highlights"
             items={data.keyAchievements}
@@ -113,8 +116,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
             (d) => d.repoName === repo.repoName
           );
           return (
-            <div key={idx} className="md:col-span-4 w-full">
-              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm max-w-3xl mr-auto w-full">
+            <div key={idx} className="sm:col-span-2 lg:col-span-3">
+              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
                 <div className="flex justify-between items-start mb-3">
                   <h4 className="font-bold text-gray-900 text-lg hover:underline cursor-pointer decoration-gray-400">
                     {repo.repoName}
@@ -152,6 +155,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
       <footer className="max-w-5xl mx-auto mt-12 text-center text-gray-400 text-xs pb-8 font-mono border-t border-gray-200 pt-8">
         Generated by Today Git Chief Editor • Powered by Google Gemini
       </footer>
+      </div>
     </div>
   );
 };

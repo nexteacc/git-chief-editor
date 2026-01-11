@@ -11,6 +11,7 @@ export async function apiPost<T>(endpoint: string, data: unknown): Promise<T> {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
     body: JSON.stringify(data),
   });
 
@@ -28,6 +29,7 @@ export async function apiGet<T>(endpoint: string): Promise<T> {
     headers: {
       'Content-Type': 'application/json',
     },
+    credentials: 'include',
   });
 
   if (!response.ok) {

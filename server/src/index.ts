@@ -3,11 +3,20 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import rateLimit from 'express-rate-limit';
+import session from 'express-session';
+import FileStoreFactory from 'session-file-store';
 import dotenv from 'dotenv';
+import { initDatabase } from './db/init.js';
 import { githubRouter } from './routes/github.js';
 import { geminiRouter } from './routes/gemini.js';
+import { authRouter } from './routes/auth.js';
 
 dotenv.config();
+
+// Initialize database
+initDatabase();
+
+const FileStore = FileStoreFactory(session);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,6 +41,26 @@ if (!isProduction) {
   }));
 }
 app.use(express.json());
+
+// Session middleware
+const sessionPath = path.join(__dirname, '../../data/sessions');
+app.use(session({
+  store: new FileStore({
+    path: sessionPath,
+    ttl: 86400 * 7, // 7 days
+    retries: 0,
+  }),
+  secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: isProduction,
+    httpOnly: true,
+    maxAge: 86400 * 7 * 1000, // 7 days
+    sameSite: 'lax',
+  }
+}));
+
 app.use('/api', apiLimiter);
 
 // Security headers
@@ -46,6 +75,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
+app.use('/api/auth', authRouter);
 app.use('/api/github', githubRouter);
 app.use('/api/gemini', geminiRouter);
 
