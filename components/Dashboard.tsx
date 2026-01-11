@@ -1,5 +1,7 @@
 import React from 'react';
 import { DailyReport, SummaryStyle } from '../types';
+import { HighlightListCard } from './ui/card-5';
+import { Sparkles } from 'lucide-react';
 
 interface DashboardProps {
   data: DailyReport;
@@ -43,7 +45,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
         <div className="flex space-x-3">
           <button
             onClick={onReset}
-            className="px-4 py-2 text-sm text-gray-500 hover:text-gray-900 transition-colors border border-transparent hover:border-gray-300 rounded-md"
+            className="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors border border-gray-200 rounded-lg font-medium"
           >
             Start Over
           </button>
@@ -72,8 +74,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
             <h3 className="text-gray-500 text-xs font-mono uppercase tracking-wider mb-2">Activity</h3>
             <div className="text-4xl font-bold text-gray-900">{data.totalCommits + data.totalPRs}</div>
             <div className="text-xs text-gray-400">Items Processed</div>
-            <div className="mt-4 inline-flex items-center px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-mono text-emerald-800 whitespace-nowrap">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2"></span>
+            <div className="mt-4 inline-flex items-center px-2.5 py-1 rounded-full bg-highlight-50 border border-highlight-200 text-[11px] font-mono text-highlight-800 whitespace-nowrap">
+              <span className="w-1.5 h-1.5 rounded-full bg-highlight-500 mr-2"></span>
               <span>Active: <span className="font-semibold">{formatDuration(totalActiveMinutes)}</span></span>
             </div>
           </div>
@@ -95,22 +97,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
           </div>
         </div>
 
-        {/* Key Achievements */}
-        <div className="md:col-span-2 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center border-b border-gray-100 pb-2">
-            <svg className="w-5 h-5 mr-2 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-            </svg>
-            Highlights
-          </h3>
-          <ul className="space-y-4">
-            {data.keyAchievements.map((item, idx) => (
-              <li key={idx} className="flex items-start group">
-                <span className="inline-block w-1.5 h-1.5 rounded-sm bg-gray-900 mt-2 mr-3 flex-shrink-0 group-hover:bg-gray-600 transition-colors"></span>
-                <p className="text-gray-700 leading-relaxed font-medium">{item}</p>
-              </li>
-            ))}
-          </ul>
+        {/* Key Achievements - using HighlightListCard */}
+        <div className="md:col-span-2">
+          <HighlightListCard
+            title="Highlights"
+            items={data.keyAchievements}
+            icon={<Sparkles className="w-5 h-5" />}
+            color="default"
+          />
         </div>
 
         {/* Repo Summaries */}
@@ -136,8 +130,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, user }) => 
                     ))}
                   </div>
                 </div>
-                <div className="text-xs text-gray-500 mb-2 inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 font-mono text-emerald-800">
-                  <span className="w-1 h-1 rounded-full bg-emerald-500 mr-2"></span>
+                <div className="text-xs text-gray-500 mb-2 inline-flex items-center px-2 py-0.5 rounded-full bg-highlight-50 border border-highlight-200 font-mono text-highlight-800">
+                  <span className="w-1 h-1 rounded-full bg-highlight-500 mr-2"></span>
                   Active time (24h):
                   <span className="ml-1 font-semibold">
                     {repoDuration?.commitCount === 1

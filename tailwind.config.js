@@ -58,6 +58,15 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			// Custom highlight colors matching Card-5 green theme
+  			highlight: {
+  				50: 'hsl(142, 76%, 95%)',
+  				100: 'hsl(142, 70%, 88%)',
+  				200: 'hsl(142, 65%, 78%)',
+  				500: 'hsl(142, 76%, 46%)',
+  				600: 'hsl(150, 70%, 40%)',
+  				800: 'hsl(142, 80%, 25%)',
+  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

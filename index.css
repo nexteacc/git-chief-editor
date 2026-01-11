@@ -104,7 +104,7 @@
 @layer components {
   .wrapper-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 4rem);
+    grid-template-columns: repeat(7, 4rem);
     gap: 0;
     justify-content: center;
     align-items: center;
