@@ -33,6 +33,9 @@ COPY --from=builder /app/server/package*.json ./server/
 # 安装生产依赖
 RUN cd server && npm install --omit=dev
 
+# 创建数据目录（用于 SQLite 和 Session）
+RUN mkdir -p /app/data
+
 # 设置环境变量
 ENV NODE_ENV=production
 ENV PORT=8080

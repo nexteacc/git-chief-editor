@@ -11,8 +11,13 @@ primary_region = 'nrt'  # 东京区域，亚洲访问快
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
   processes = ['app']
+
+# 持久卷挂载 - 用于 SQLite 数据库和 Session 存储
+[mounts]
+  source = "data"
+  destination = "/app/data"
 
 [[vm]]
   memory = '256mb'
