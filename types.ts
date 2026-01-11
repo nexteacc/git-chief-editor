@@ -11,6 +11,11 @@ export enum SummaryStyle {
   ACHIEVEMENT = 'ACHIEVEMENT', // Highlight oriented, enthusiastic
 }
 
+export enum OutputLanguage {
+  CHINESE = 'CHINESE',
+  ENGLISH = 'ENGLISH',
+}
+
 export interface GitHubEvent {
   id: string;
   type: string;

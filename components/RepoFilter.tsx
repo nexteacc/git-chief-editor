@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { RepoActivity, SummaryStyle } from '../types';
+import { RepoActivity, SummaryStyle, OutputLanguage } from '../types';
+import DropdownComponent from './ui/dropdown-01';
 
 interface RepoFilterProps {
   repos: RepoActivity[];
   userLogin: string;
-  onGenerate: (selectedIds: number[], style: SummaryStyle) => void;
+  onGenerate: (selectedIds: number[], style: SummaryStyle, language: OutputLanguage) => void;
 }
 
 export const RepoFilter: React.FC<RepoFilterProps> = ({ repos, userLogin, onGenerate }) => {
   const [selectedIds, setSelectedIds] = useState<number[]>(repos.map(r => r.repoId));
   const [selectedStyle, setSelectedStyle] = useState<SummaryStyle>(SummaryStyle.PROFESSIONAL);
+  const [selectedLanguage, setSelectedLanguage] = useState<OutputLanguage>(OutputLanguage.CHINESE);
   const [scanTime, setScanTime] = useState<string>('');
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({ repos, userLogin, onGene
 
   const handleGenerate = () => {
     if (selectedIds.length > 0) {
-      onGenerate(selectedIds, selectedStyle);
+      onGenerate(selectedIds, selectedStyle, selectedLanguage);
     }
   };
 
@@ -118,8 +120,8 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({ repos, userLogin, onGene
                 key={style.id}
                 onClick={() => setSelectedStyle(style.id)}
                 className={`p-4 rounded-md border text-left transition-all ${
-                  selectedStyle === style.id 
-                    ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900' 
+                  selectedStyle === style.id
+                    ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
                     : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -131,6 +133,21 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({ repos, userLogin, onGene
                 </div>
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Language Selection */}
+        <div>
+          <h3 className="text-base font-semibold text-gray-900 mb-4">Output Language</h3>
+          <div className="max-w-xs">
+            <DropdownComponent
+              options={[
+                { id: OutputLanguage.CHINESE, label: '中文', description: 'Simplified Chinese' },
+                { id: OutputLanguage.ENGLISH, label: 'English', description: 'English' },
+              ]}
+              value={selectedLanguage}
+              onChange={setSelectedLanguage}
+            />
           </div>
         </div>
       </div>

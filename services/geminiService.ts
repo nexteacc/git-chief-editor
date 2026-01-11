@@ -1,5 +1,5 @@
 import { apiPost } from './apiClient';
-import { DailyReport, RepoActivity, SummaryStyle } from '../types';
+import { DailyReport, RepoActivity, SummaryStyle, OutputLanguage } from '../types';
 
 /**
  * 生成日报
@@ -7,7 +7,8 @@ import { DailyReport, RepoActivity, SummaryStyle } from '../types';
  */
 export const generateDailyReport = async (
   activities: RepoActivity[],
-  style: SummaryStyle
+  style: SummaryStyle,
+  language: OutputLanguage
 ): Promise<DailyReport> => {
-  return apiPost<DailyReport>('/gemini/report', { activities, style });
+  return apiPost<DailyReport>('/gemini/report', { activities, style, language });
 };

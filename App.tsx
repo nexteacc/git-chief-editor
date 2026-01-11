@@ -5,7 +5,7 @@ import { LoadingScreen } from './components/LoadingScreen';
 import { Dashboard } from './components/Dashboard';
 import { validateToken, fetchRecentActivity } from './services/githubService';
 import { generateDailyReport } from './services/geminiService';
-import { AppStep, RepoActivity, DailyReport, SummaryStyle, UserProfile } from './types';
+import { AppStep, RepoActivity, DailyReport, SummaryStyle, UserProfile, OutputLanguage } from './types';
 
 const App: React.FC = () => {
   const [step, setStep] = useState<AppStep>(AppStep.AUTH);
@@ -35,13 +35,13 @@ const App: React.FC = () => {
     }
   };
 
-  const handleGenerateReport = async (selectedRepoIds: number[], style: SummaryStyle) => {
+  const handleGenerateReport = async (selectedRepoIds: number[], style: SummaryStyle, language: OutputLanguage) => {
     setIsLoading(true);
     setStep(AppStep.PROCESSING);
-    
+
     try {
       const selectedRepos = activeRepos.filter(r => selectedRepoIds.includes(r.repoId));
-      const report = await generateDailyReport(selectedRepos, style);
+      const report = await generateDailyReport(selectedRepos, style, language);
       setReportData(report);
       setStep(AppStep.DASHBOARD);
     } catch (err) {

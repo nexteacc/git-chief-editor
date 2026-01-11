@@ -4,6 +4,11 @@ export enum SummaryStyle {
   ACHIEVEMENT = 'ACHIEVEMENT',
 }
 
+export enum OutputLanguage {
+  CHINESE = 'CHINESE',
+  ENGLISH = 'ENGLISH',
+}
+
 export interface RawCommitData {
   message: string;
   sha: string;
@@ -68,4 +73,5 @@ export interface FetchActivityRequest {
 export interface GenerateReportRequest {
   activities: RepoActivity[];
   style: SummaryStyle;
+  language: OutputLanguage;
 }

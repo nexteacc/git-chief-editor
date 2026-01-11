@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { DailyReport, RepoActivity, SummaryStyle, RepoDuration } from '../types.js';
+import { DailyReport, RepoActivity, SummaryStyle, OutputLanguage, RepoDuration } from '../types.js';
 
 const MAX_PR_BODY_LENGTH = 5000;
 const MAX_COMMITS_PER_REPO = 500;
@@ -10,12 +10,12 @@ const reportSchema: Schema = {
   properties: {
     headline: {
       type: Type.STRING,
-      description: "一个吸引人的、高度概括的今日工作总结（最多10个字）。",
+      description: "A catchy, high-level summary of today's work (max 10 words).",
     },
     keyAchievements: {
       type: Type.ARRAY,
       items: { type: Type.STRING },
-      description: "3-5个要点，突出所有仓库中最重要的成就。",
+      description: "3-5 key points highlighting the most important achievements across all repositories.",
     },
     repoSummaries: {
       type: Type.ARRAY,
@@ -23,11 +23,11 @@ const reportSchema: Schema = {
         type: Type.OBJECT,
         properties: {
           repoName: { type: Type.STRING },
-          summary: { type: Type.STRING, description: "一段话总结这个仓库的工作内容。" },
+          summary: { type: Type.STRING, description: "A paragraph summarizing the work done in this repository." },
           tags: {
             type: Type.ARRAY,
             items: { type: Type.STRING },
-            description: "2-3个简短标签，如'重构'、'功能'、'修复'、'文档'等。"
+            description: "2-3 short tags like 'refactor', 'feature', 'bugfix', 'docs', etc."
           },
         },
         required: ["repoName", "summary", "tags"],
@@ -37,9 +37,32 @@ const reportSchema: Schema = {
   required: ["headline", "keyAchievements", "repoSummaries"],
 };
 
+const SYSTEM_INSTRUCTION = `You are a professional technical writer who specializes in summarizing software development logs. Generate clear, insightful daily reports based on GitHub activity data. Focus on meaningful achievements and avoid trivial details.`;
+
+const getStyleInstruction = (style: SummaryStyle): string => {
+  switch (style) {
+    case SummaryStyle.PROFESSIONAL:
+      return "Use a concise, professional tone. Employ business-oriented verbs (completed, fixed, deployed, implemented). Focus on results and keep it brief.";
+    case SummaryStyle.TECHNICAL:
+      return "Provide technical depth and analysis. Use precise technical terminology. When possible, mention specific modules, architectural changes, or refactoring patterns.";
+    case SummaryStyle.ACHIEVEMENT:
+      return "Highlight achievements with an enthusiastic tone. Emphasize the impact and complexity of the work. Celebrate progress and milestones.";
+  }
+};
+
+const getLanguageInstruction = (language: OutputLanguage): string => {
+  switch (language) {
+    case OutputLanguage.CHINESE:
+      return "Output all content in Simplified Chinese (简体中文). Use natural Chinese expressions.";
+    case OutputLanguage.ENGLISH:
+      return "Output all content in English. Use clear and professional English.";
+  }
+};
+
 export const generateDailyReport = async (
   activities: RepoActivity[],
-  style: SummaryStyle
+  style: SummaryStyle,
+  language: OutputLanguage
 ): Promise<DailyReport> => {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -47,19 +70,6 @@ export const generateDailyReport = async (
   }
 
   const ai = new GoogleGenAI({ apiKey });
-
-  let styleInstruction = "";
-  switch (style) {
-    case SummaryStyle.PROFESSIONAL:
-      styleInstruction = "风格：简洁专业。使用商务导向的动词（完成、修复、部署）。聚焦结果，保持简洁。";
-      break;
-    case SummaryStyle.TECHNICAL:
-      styleInstruction = "风格：技术深度分析。使用精确的技术术语。如果能够推断，提及具体的模块、架构变更或重构模式。";
-      break;
-    case SummaryStyle.ACHIEVEMENT:
-      styleInstruction = "风格：成就突出。语调应该充满热情。突出工作的影响和难度。";
-      break;
-  }
 
   const limitedActivities = activities.map((repo) => ({
     ...repo,
@@ -76,17 +86,27 @@ export const generateDailyReport = async (
     })),
   }));
 
-  const prompt = `
-    你是 Today Git Chief Editor，开发者的个人编辑助手。
-    请分析以下过去24小时的 GitHub 活动数据。
+  const prompt = `## Role
+You are "Today Git Chief Editor", a personal editor assistant for developers.
 
-    ${styleInstruction}
+## Task
+Analyze the following GitHub activity from the past 24 hours and generate a daily work summary report.
 
-    数据：
-    ${JSON.stringify(dataInput, null, 2)}
+## Style Guidelines
+${getStyleInstruction(style)}
 
-    请严格按照 schema 生成 JSON 响应。所有内容必须使用中文。
-  `;
+## Output Language
+${getLanguageInstruction(language)}
+
+## Activity Data
+${JSON.stringify(dataInput, null, 2)}
+
+## Requirements
+- Follow the provided JSON schema strictly
+- Be concise yet informative
+- Focus on meaningful achievements over trivial changes
+- Group related work logically
+- Use appropriate technical terminology`;
 
   try {
     console.log('[Gemini Service] Generating report...');
@@ -97,7 +117,7 @@ export const generateDailyReport = async (
       config: {
         responseMimeType: "application/json",
         responseSchema: reportSchema,
-        systemInstruction: "你是一位专业的技术写作专家，擅长总结软件开发日志。请使用中文回答，确保所有输出内容都是中文。",
+        systemInstruction: SYSTEM_INSTRUCTION,
       },
     });
 
@@ -143,11 +163,21 @@ export const generateDailyReport = async (
       };
     });
 
+    // Format date based on language
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+    const locale = language === OutputLanguage.CHINESE ? 'zh-CN' : 'en-US';
+    const formattedDate = new Date().toLocaleDateString(locale, dateOptions);
+
     console.log('[Gemini Service] Report generated successfully.');
 
     return {
       ...parsed,
-      date: new Date().toLocaleDateString('zh-CN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+      date: formattedDate,
       totalCommits,
       totalPRs,
       style,
