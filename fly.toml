@@ -2,7 +2,7 @@
 # 使用 `fly launch` 时会自动生成app名称，或手动修改下面的值
 
 app = 'git-chief-editor'
-primary_region = 'nrt'  # 东京区域，亚洲访问快
+primary_region = 'sin'  # 新加坡区域
 
 [build]
 
