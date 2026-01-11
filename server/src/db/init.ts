@@ -1,11 +1,19 @@
 import Database, { Database as DatabaseType } from 'better-sqlite3';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const dbPath = process.env.DATABASE_PATH || path.join(__dirname, '../../data/app.db');
+
+// Ensure the directory exists before creating the database
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+  fs.mkdirSync(dbDir, { recursive: true });
+  console.log('[DB] Created directory:', dbDir);
+}
 
 export const db: DatabaseType = new Database(dbPath);
 
