@@ -18,13 +18,14 @@ Today Git Chief Editor is an AI-powered tool that helps developers automatically
 - **Auto-fetch Activity** - Retrieves commits and pull requests from the last 24 hours
 - **AI Summary** - Uses Google Gemini AI to generate structured daily reports
 - **Multiple Styles** - Supports Professional, Technical, and Achievement report styles
+- **Modern UI** - Clean, responsive interface built with shadcn/ui and Pulse Beams
 - **Privacy First** - GitHub Token is never stored, API Key stays on the server
 
 ### Tech Stack
 
 | Layer | Technology |
 |-------|------------|
-| Frontend | React + Vite + TypeScript + Tailwind CSS |
+| Frontend | React + Vite + TypeScript + Tailwind CSS + shadcn/ui |
 | Backend | Express + Node.js + TypeScript |
 | AI | Google Gemini |
 
