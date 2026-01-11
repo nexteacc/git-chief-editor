@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import rateLimit from 'express-rate-limit';
 import session from 'express-session';
@@ -25,6 +26,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Trust proxy (required for Fly.io and other reverse proxies)
+if (isProduction) {
+  app.set('trust proxy', 1);
+}
+
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
@@ -44,6 +50,13 @@ app.use(express.json());
 
 // Session middleware
 const sessionPath = path.join(__dirname, '../../data/sessions');
+
+// Ensure session directory exists
+if (!fs.existsSync(sessionPath)) {
+  fs.mkdirSync(sessionPath, { recursive: true });
+  console.log('[Session] Created directory:', sessionPath);
+}
+
 app.use(session({
   store: new FileStore({
     path: sessionPath,
