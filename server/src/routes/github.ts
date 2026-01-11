@@ -38,7 +38,7 @@ githubRouter.get('/public-repos/:username', async (req: Request, res: Response) 
       throw new Error(`GitHub API error: ${response.status}`);
     }
 
-    const repos = await response.json();
+    const repos = await response.json() as any[];
 
     // Return simplified repo list
     const simplifiedRepos = repos.map((repo: any) => ({
@@ -91,7 +91,7 @@ githubRouter.get('/private-repos', async (req: Request, res: Response) => {
       throw new Error(`GitHub API error: ${response.status}`);
     }
 
-    const repos = await response.json();
+    const repos = await response.json() as any[];
 
     // Filter to only private repos
     const privateRepos = repos
