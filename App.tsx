@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AuthScreen } from './components/AuthScreen';
+import { AuthScreen, RepoAccessOptions } from './components/AuthScreen';
 import { RepoFilter } from './components/RepoFilter';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Dashboard } from './components/Dashboard';
@@ -16,16 +16,16 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleVerifyToken = async (inputToken: string) => {
+  const handleVerifyToken = async (inputToken: string, accessOptions: RepoAccessOptions) => {
     setIsLoading(true);
     setError(null);
     try {
-      const user = await validateToken(inputToken);
+      const user = await validateToken(inputToken, accessOptions);
       setToken(inputToken);
       setUserProfile(user);
       
       // Immediately fetch repos to move to next step
-      const repos = await fetchRecentActivity(inputToken, user.login);
+      const repos = await fetchRecentActivity(inputToken, user.login, accessOptions);
       setActiveRepos(repos);
       setStep(AppStep.FILTER);
     } catch (err) {

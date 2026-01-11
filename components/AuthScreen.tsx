@@ -1,19 +1,37 @@
 import React, { useState } from 'react';
 
+export interface RepoAccessOptions {
+  publicRepos: boolean;
+  privateRepos: boolean;
+}
+
+interface RepoAccessOptions {
+  publicRepos: boolean;
+  privateRepos: boolean;
+}
+
 interface AuthScreenProps {
-  onVerify: (token: string) => void;
+  onVerify: (token: string, accessOptions: RepoAccessOptions) => void;
   isLoading: boolean;
   error: string | null;
 }
 
 export const AuthScreen: React.FC<AuthScreenProps> = ({ onVerify, isLoading, error }) => {
   const [token, setToken] = useState('');
+  const [accessOptions, setAccessOptions] = useState<RepoAccessOptions>({
+    publicRepos: true,
+    privateRepos: false,
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (token.trim()) {
-      onVerify(token.trim());
+    if (token.trim() && (accessOptions.publicRepos || accessOptions.privateRepos)) {
+      onVerify(token.trim(), accessOptions);
     }
+  };
+
+  const toggleOption = (key: keyof RepoAccessOptions) => {
+    setAccessOptions(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -60,12 +78,28 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onVerify, isLoading, err
                   </svg>
                   Token is never stored on our servers
                 </p>
-                <p className="text-xs text-gray-600 flex items-center">
-                  <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Requires <code className="mx-1 text-gray-700 bg-gray-100 px-1.5 py-0.5 rounded border border-gray-200">repo</code> scope for private repos
-                </p>
+                <label 
+                  className="text-xs text-gray-600 flex items-center cursor-pointer"
+                  onClick={() => toggleOption('publicRepos')}
+                >
+                  <div className={`w-4 h-4 mr-2 rounded flex-shrink-0 flex items-center justify-center transition-all ${accessOptions.publicRepos ? 'bg-emerald-500' : 'border border-gray-300'}`}>
+                    {accessOptions.publicRepos && (
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                    )}
+                  </div>
+                  Read public repositories
+                </label>
+                <label 
+                  className="text-xs text-gray-600 flex items-center cursor-pointer"
+                  onClick={() => toggleOption('privateRepos')}
+                >
+                  <div className={`w-4 h-4 mr-2 rounded flex-shrink-0 flex items-center justify-center transition-all ${accessOptions.privateRepos ? 'bg-emerald-500' : 'border border-gray-300'}`}>
+                    {accessOptions.privateRepos && (
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                    )}
+                  </div>
+                  Read private repositories
+                </label>
               </div>
             </div>
 
@@ -78,9 +112,18 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onVerify, isLoading, err
               </div>
             )}
 
+            {!accessOptions.publicRepos && !accessOptions.privateRepos && (
+              <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg text-amber-700 text-sm flex items-center">
+                 <svg className="w-4 h-4 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                 </svg>
+                 Please select at least one repository type
+              </div>
+            )}
+
             <button
               type="submit"
-              disabled={isLoading || !token}
+              disabled={isLoading || !token || (!accessOptions.publicRepos && !accessOptions.privateRepos)}
               className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all`}
             >
               {isLoading ? (

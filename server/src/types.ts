@@ -49,13 +49,20 @@ export interface UserProfile {
   name: string;
 }
 
+export interface RepoAccessOptions {
+  publicRepos: boolean;
+  privateRepos: boolean;
+}
+
 export interface ValidateTokenRequest {
   token: string;
+  accessOptions: RepoAccessOptions;
 }
 
 export interface FetchActivityRequest {
   token: string;
   username: string;
+  accessOptions: RepoAccessOptions;
 }
 
 export interface GenerateReportRequest {

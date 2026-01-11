@@ -16,7 +16,7 @@ export const LoadingScreen: React.FC = () => {
         <div className="h-1 w-full bg-gray-100 rounded overflow-hidden">
           <div className="h-full bg-gray-900 animate-[translateX_1.5s_ease-in-out_infinite] w-1/2 rounded origin-left"></div>
         </div>
-        <p className="text-center text-xs text-gray-500 font-mono">
+        <p className="text-center text-xs text-gray-500 font-mono whitespace-nowrap">
           Parsing commits & generating summary
         </p>
       </div>
