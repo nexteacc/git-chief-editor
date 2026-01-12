@@ -84,9 +84,20 @@ githubRouter.get('/private-repos', async (req: Request, res: Response) => {
       }
     );
 
+    // Check if the token has the necessary 'repo' scope
+    const scopes = response.headers.get('X-OAuth-Scopes') || '';
+    console.log('[Debug] X-OAuth-Scopes:', scopes); // Add debug log
+
+    if (!scopes.includes('repo')) {
+      return res.status(403).json({
+        error: 'Missing "repo" scope',
+        details: 'The current authorization does not allow access to private repositories.'
+      });
+    }
+
     if (!response.ok) {
       if (response.status === 401) {
-        return res.status(401).json({ error: 'Token expired or insufficient permissions. Please authorize repo access.' });
+        return res.status(401).json({ error: 'Token expired or insufficient permissions.' });
       }
       throw new Error(`GitHub API error: ${response.status}`);
     }

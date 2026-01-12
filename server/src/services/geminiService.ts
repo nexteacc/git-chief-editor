@@ -112,7 +112,7 @@ ${JSON.stringify(dataInput, null, 2)}
     console.log('[Gemini Service] Generating report...');
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-preview",
+      model: "gemini-2.0-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -185,7 +185,12 @@ ${JSON.stringify(dataInput, null, 2)}
     };
 
   } catch (error) {
-    console.error("[Gemini Service] Generation Error:", error);
-    throw new Error("Failed to generate AI report. Please try again.");
+    console.error("[Gemini Service] Generation Error Details:", JSON.stringify(error, null, 2));
+    if (error instanceof Error) {
+      console.error("[Gemini Service] Error Message:", error.message);
+      console.error("[Gemini Service] Error Stack:", error.stack);
+      throw new Error(`Gemini API Error: ${error.message}`);
+    }
+    throw new Error("Failed to generate AI report due to an unknown error.");
   }
 };
