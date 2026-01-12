@@ -336,26 +336,44 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
           {/* Style Selection */}
           <div>
             <h3 className="text-base font-semibold text-gray-900 mb-4">Select Report Style</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { id: SummaryStyle.PROFESSIONAL, label: 'Professional', desc: 'Concise, result-oriented.' },
-                { id: SummaryStyle.TECHNICAL, label: 'Technical', desc: 'Detailed, architectural.' },
-                { id: SummaryStyle.ACHIEVEMENT, label: 'Achievement', desc: 'Enthusiastic highlights.' },
+                { id: SummaryStyle.PROFESSIONAL, label: 'Professional', desc: 'Concise, result-oriented.', bg: '/prof.png' },
+                { id: SummaryStyle.TECHNICAL, label: 'Technical', desc: 'Detailed, architectural.', bg: '/tech.png' },
+                { id: SummaryStyle.ACHIEVEMENT, label: 'Achievement', desc: 'Enthusiastic highlights.', bg: null },
               ].map((style) => (
                 <button
                   key={style.id}
                   onClick={() => setSelectedStyle(style.id)}
-                  className={`p-4 rounded-md border text-left transition-all ${selectedStyle === style.id
-                    ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
-                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                  className={`relative flex flex-col p-6 rounded-xl border text-left transition-all overflow-hidden group h-48 ${selectedStyle === style.id
+                      ? 'border-gray-900 ring-2 ring-gray-900 bg-gray-50'
+                      : 'border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50'
                     }`}
                 >
-                  <div className={`font-bold mb-1 ${selectedStyle === style.id ? 'text-gray-900' : 'text-gray-600'}`}>
-                    {style.label}
+                  <div className="relative z-10 pr-2">
+                    <div className={`text-lg font-bold mb-2 ${selectedStyle === style.id ? 'text-gray-900' : 'text-gray-700'}`}>
+                      {style.label}
+                    </div>
+                    <div className="text-sm text-gray-500 leading-relaxed">
+                      {style.desc}
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {style.desc}
-                  </div>
+
+                  {/* Image absolute positioned bottom-right */}
+                  {style.bg ? (
+                    <div className="absolute bottom-0 right-0 w-32 h-32 translate-x-4 translate-y-4">
+                      <img
+                        src={style.bg}
+                        alt=""
+                        className="w-full h-full object-contain object-bottom-right transform group-hover:scale-110 group-hover:-translate-y-2 group-hover:-translate-x-2 transition-all duration-500"
+                      />
+                    </div>
+                  ) : (
+                    /* Placeholder star for Achievement */
+                    <div className="absolute bottom-4 right-4 w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 text-gray-400">
+                      <span className="text-2xl">✨</span>
+                    </div>
+                  )}
                 </button>
               ))}
             </div>
