@@ -16,6 +16,39 @@ interface RepoFilterProps {
   hasRepoScope: boolean;
 }
 
+const getLanguageIcon = (lang: string | null) => {
+  if (!lang) return null;
+
+  const map: Record<string, string> = {
+    'TypeScript': 'typescript',
+    'JavaScript': 'javascript',
+    'Python': 'python',
+    'Java': 'java',
+    'C#': 'csharp',
+    'C++': 'cplusplus',
+    'C': 'c',
+    'Go': 'go',
+    'Rust': 'rust',
+    'PHP': 'php',
+    'Ruby': 'ruby',
+    'Swift': 'swift',
+    'Kotlin': 'kotlin',
+    'HTML': 'html5',
+    'CSS': 'css3',
+    'Vue': 'vuejs',
+    'React': 'react',
+    'Dart': 'dart',
+    'Shell': 'bash',
+    'PowerShell': 'powershell',
+    'Markdown': 'markdown',
+    'JSON': 'json',
+  };
+
+  const slug = map[lang] || lang.toLowerCase();
+  // Using DevIcon CDN for VS Code style colorful icons
+  return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${slug}/${slug}-original.svg`;
+};
+
 export const RepoFilter: React.FC<RepoFilterProps> = ({
   publicRepos,
   privateRepos,
@@ -174,7 +207,17 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
                                 </div>
                                 <div className="flex items-center space-x-2 text-xs text-gray-400">
                                   {repo.language && (
-                                    <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{repo.language}</span>
+                                    <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-gray-50 border border-gray-100">
+                                      {getLanguageIcon(repo.language) && (
+                                        <img
+                                          src={getLanguageIcon(repo.language)!}
+                                          alt={repo.language}
+                                          className="w-3.5 h-3.5"
+                                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                                        />
+                                      )}
+                                      <span className="text-gray-600 font-medium">{repo.language}</span>
+                                    </div>
                                   )}
                                 </div>
                               </li>
@@ -244,6 +287,21 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
                                       <p className="text-xs text-gray-400 truncate max-w-md">{repo.description}</p>
                                     )}
                                   </div>
+                                </div>
+                                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                  {repo.language && (
+                                    <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded bg-gray-50 border border-gray-100">
+                                      {getLanguageIcon(repo.language) && (
+                                        <img
+                                          src={getLanguageIcon(repo.language)!}
+                                          alt={repo.language}
+                                          className="w-3.5 h-3.5"
+                                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                                        />
+                                      )}
+                                      <span className="text-gray-600 font-medium">{repo.language}</span>
+                                    </div>
+                                  )}
                                 </div>
                               </li>
                             ))
