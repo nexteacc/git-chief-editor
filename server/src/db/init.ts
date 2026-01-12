@@ -65,6 +65,19 @@ export function initDatabase(): void {
     CREATE INDEX IF NOT EXISTS idx_users_token_valid ON users(token_valid);
   `);
 
+  // Sessions table (for multi-machine session sharing)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      sid TEXT PRIMARY KEY,
+      sess TEXT NOT NULL,
+      expired INTEGER NOT NULL
+    )
+  `);
+
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_sessions_expired ON sessions(expired);
+  `);
+
   console.log('[DB] Database initialized successfully');
 }
 

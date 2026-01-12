@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import * as Collapsible from '@radix-ui/react-collapsible';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SummaryStyle, OutputLanguage } from '../types';
 import { RepoInfo } from '../services/githubService';
 import { User, authorizeRepoAccess } from '../services/authService';
@@ -26,6 +28,7 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
   const [selectedStyle, setSelectedStyle] = useState<SummaryStyle>(SummaryStyle.PROFESSIONAL);
   const [selectedLanguage, setSelectedLanguage] = useState<OutputLanguage>(OutputLanguage.CHINESE);
   const [scanTime, setScanTime] = useState<string>('');
+  const [showPublic, setShowPublic] = useState(true);
   const [showPrivate, setShowPrivate] = useState(false);
 
   // All repos combined
@@ -79,7 +82,7 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
     <div className="min-h-screen bg-white">
       <Header user={user} onLogout={onLogout} />
 
-      <div className="pt-20 px-6 pb-6 max-w-5xl mx-auto flex flex-col">
+      <div className="pt-20 px-6 pb-40 max-w-5xl mx-auto flex flex-col">
         <header className="mb-8 border-b border-gray-200 pb-6">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Select Repositories</h2>
           <div className="flex items-center text-sm text-gray-500">
@@ -103,13 +106,13 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
               <div className="flex items-center space-x-2">
                 <button
                   onClick={selectAll}
-                  className="text-xs text-gray-600 hover:text-gray-900 px-2 py-1 hover:bg-gray-100 rounded"
+                  className="text-xs font-medium text-gray-700 px-3 py-1.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors"
                 >
                   Select all
                 </button>
                 <button
                   onClick={selectNone}
-                  className="text-xs text-gray-600 hover:text-gray-900 px-2 py-1 hover:bg-gray-100 rounded"
+                  className="text-xs font-medium text-gray-700 px-3 py-1.5 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors"
                 >
                   Clear
                 </button>
@@ -118,99 +121,139 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
 
             {/* Public Repos */}
             <div className="border-b border-gray-100">
-              <div className="px-4 py-2 bg-gray-50/50 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Public Repositories ({publicRepos.length})
-              </div>
-              <ul className="divide-y divide-gray-100 max-h-[min(250px,40vh)] overflow-y-auto">
-                {publicRepos.length === 0 ? (
-                  <li className="p-6 text-center text-gray-500 text-sm">
-                    No public repositories found.
-                  </li>
-                ) : (
-                  publicRepos.map(repo => (
-                    <li
-                      key={repo.id}
-                      className={`p-3 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between group ${selectedRepos.has(repo.fullName) ? 'bg-gray-50' : ''}`}
-                      onClick={() => toggleRepo(repo.fullName)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${selectedRepos.has(repo.fullName) ? 'bg-gray-900 border-gray-900' : 'border-gray-300 bg-white group-hover:border-gray-400'}`}>
-                          {selectedRepos.has(repo.fullName) && (
-                            <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+              <Collapsible.Root open={showPublic} onOpenChange={setShowPublic}>
+                <Collapsible.Trigger asChild>
+                  <div
+                    className="px-4 py-2 bg-gray-50/50 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <span className="flex items-center">
+                      <svg className={`w-4 h-4 mr-2 text-gray-500 transition-transform ${showPublic ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span className="text-sm font-medium text-white bg-gray-900 px-3 py-1 rounded-md">Public Repositories</span>
+                      <span className="ml-2 text-sm font-semibold text-gray-900 bg-gray-200 px-2 py-0.5 rounded">{publicRepos.length}</span>
+                    </span>
+                  </div>
+                </Collapsible.Trigger>
+                <Collapsible.Content forceMount>
+                  <AnimatePresence initial={false}>
+                    {showPublic && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <ul className="divide-y divide-gray-100 max-h-[min(250px,40vh)] overflow-y-auto">
+                          {publicRepos.length === 0 ? (
+                            <li className="p-6 text-center text-gray-500 text-sm">
+                              No public repositories found.
+                            </li>
+                          ) : (
+                            publicRepos.map(repo => (
+                              <li
+                                key={repo.id}
+                                className={`p-3 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between group ${selectedRepos.has(repo.fullName) ? 'bg-gray-50' : ''}`}
+                                onClick={() => toggleRepo(repo.fullName)}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${selectedRepos.has(repo.fullName) ? 'bg-gray-900 border-gray-900' : 'border-gray-300 bg-white group-hover:border-gray-400'}`}>
+                                    {selectedRepos.has(repo.fullName) && (
+                                      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <span className={`font-medium text-sm ${selectedRepos.has(repo.fullName) ? 'text-gray-900' : 'text-gray-600'}`}>
+                                      {repo.name}
+                                    </span>
+                                    {repo.description && (
+                                      <p className="text-xs text-gray-400 truncate max-w-md">{repo.description}</p>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                  {repo.language && (
+                                    <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{repo.language}</span>
+                                  )}
+                                </div>
+                              </li>
+                            ))
                           )}
-                        </div>
-                        <div>
-                          <span className={`font-medium text-sm ${selectedRepos.has(repo.fullName) ? 'text-gray-900' : 'text-gray-600'}`}>
-                            {repo.name}
-                          </span>
-                          {repo.description && (
-                            <p className="text-xs text-gray-400 truncate max-w-md">{repo.description}</p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2 text-xs text-gray-400">
-                        {repo.language && (
-                          <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{repo.language}</span>
-                        )}
-                      </div>
-                    </li>
-                  ))
-                )}
-              </ul>
+                        </ul>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </Collapsible.Content>
+              </Collapsible.Root>
             </div>
 
             {/* Private Repos Section */}
             {hasRepoScope ? (
-              <div>
-                <div
-                  className="px-4 py-2 bg-gray-50/50 text-xs font-medium text-gray-500 uppercase tracking-wider flex items-center justify-between cursor-pointer hover:bg-gray-100"
-                  onClick={() => setShowPrivate(!showPrivate)}
-                >
-                  <span className="flex items-center">
-                    <svg className={`w-4 h-4 mr-1 transition-transform ${showPrivate ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                    Private Repositories ({privateRepos.length})
-                  </span>
-                  <span className="text-emerald-600 text-[10px] font-normal normal-case">Authorized</span>
-                </div>
-                {showPrivate && (
-                  <ul className="divide-y divide-gray-100 max-h-[min(200px,35vh)] overflow-y-auto">
-                    {privateRepos.length === 0 ? (
-                      <li className="p-6 text-center text-gray-500 text-sm">
-                        No private repositories found.
-                      </li>
-                    ) : (
-                      privateRepos.map(repo => (
-                        <li
-                          key={repo.id}
-                          className={`p-3 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between group ${selectedRepos.has(repo.fullName) ? 'bg-gray-50' : ''}`}
-                          onClick={() => toggleRepo(repo.fullName)}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${selectedRepos.has(repo.fullName) ? 'bg-gray-900 border-gray-900' : 'border-gray-300 bg-white group-hover:border-gray-400'}`}>
-                              {selectedRepos.has(repo.fullName) && (
-                                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                              )}
-                            </div>
-                            <div>
-                              <div className="flex items-center space-x-2">
-                                <span className={`font-medium text-sm ${selectedRepos.has(repo.fullName) ? 'text-gray-900' : 'text-gray-600'}`}>
-                                  {repo.name}
-                                </span>
-                                <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">PRIVATE</span>
-                              </div>
-                              {repo.description && (
-                                <p className="text-xs text-gray-400 truncate max-w-md">{repo.description}</p>
-                              )}
-                            </div>
-                          </div>
-                        </li>
-                      ))
+              <Collapsible.Root open={showPrivate} onOpenChange={setShowPrivate}>
+                <Collapsible.Trigger asChild>
+                  <div
+                    className="px-4 py-2 bg-gray-50/50 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors"
+                  >
+                    <span className="flex items-center">
+                      <svg className={`w-4 h-4 mr-2 text-gray-500 transition-transform ${showPrivate ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                      <span className="text-sm font-medium text-white bg-gray-900 px-3 py-1 rounded-md">Private Repositories</span>
+                      <span className="ml-2 text-sm font-semibold text-gray-900 bg-gray-200 px-2 py-0.5 rounded">{privateRepos.length}</span>
+                    </span>
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">Authorized</span>
+                  </div>
+                </Collapsible.Trigger>
+                <Collapsible.Content forceMount>
+                  <AnimatePresence initial={false}>
+                    {showPrivate && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <ul className="divide-y divide-gray-100 max-h-[min(200px,35vh)] overflow-y-auto">
+                          {privateRepos.length === 0 ? (
+                            <li className="p-6 text-center text-gray-500 text-sm">
+                              No private repositories found.
+                            </li>
+                          ) : (
+                            privateRepos.map(repo => (
+                              <li
+                                key={repo.id}
+                                className={`p-3 hover:bg-gray-50 transition-colors cursor-pointer flex items-center justify-between group ${selectedRepos.has(repo.fullName) ? 'bg-gray-50' : ''}`}
+                                onClick={() => toggleRepo(repo.fullName)}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${selectedRepos.has(repo.fullName) ? 'bg-gray-900 border-gray-900' : 'border-gray-300 bg-white group-hover:border-gray-400'}`}>
+                                    {selectedRepos.has(repo.fullName) && (
+                                      <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center space-x-2">
+                                      <span className={`font-medium text-sm ${selectedRepos.has(repo.fullName) ? 'text-gray-900' : 'text-gray-600'}`}>
+                                        {repo.name}
+                                      </span>
+                                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">PRIVATE</span>
+                                    </div>
+                                    {repo.description && (
+                                      <p className="text-xs text-gray-400 truncate max-w-md">{repo.description}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </li>
+                            ))
+                          )}
+                        </ul>
+                      </motion.div>
                     )}
-                  </ul>
-                )}
-              </div>
+                  </AnimatePresence>
+                </Collapsible.Content>
+              </Collapsible.Root>
             ) : (
               <div className="p-4 bg-gray-50 border-t border-gray-100">
                 <div className="flex items-center justify-between">
@@ -220,7 +263,7 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
                   </div>
                   <button
                     onClick={handleAuthorizePrivate}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-colors flex items-center space-x-2"
+                    className="px-4 py-2 text-sm font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-100 hover:border-emerald-300 transition-colors flex items-center space-x-2"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -244,11 +287,10 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
                 <button
                   key={style.id}
                   onClick={() => setSelectedStyle(style.id)}
-                  className={`p-4 rounded-md border text-left transition-all ${
-                    selectedStyle === style.id
-                      ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
-                      : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
-                  }`}
+                  className={`p-4 rounded-md border text-left transition-all ${selectedStyle === style.id
+                    ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
+                    }`}
                 >
                   <div className={`font-bold mb-1 ${selectedStyle === style.id ? 'text-gray-900' : 'text-gray-600'}`}>
                     {style.label}
@@ -281,11 +323,10 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
           <button
             onClick={handleGenerate}
             disabled={selectedRepos.size === 0}
-            className={`px-8 py-2.5 rounded-md font-bold text-sm transition-all border ${
-              selectedRepos.size === 0
-                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                : 'bg-gray-900 text-white border-gray-900 hover:bg-gray-800'
-            }`}
+            className={`px-8 py-2.5 rounded-md font-bold text-sm transition-all border ${selectedRepos.size === 0
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-gray-900 text-white border-gray-900 hover:bg-gray-800'
+              }`}
           >
             Generate Report ({selectedRepos.size} repos)
           </button>
