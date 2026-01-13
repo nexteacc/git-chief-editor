@@ -1,0 +1,17 @@
+name: Fly Deploy
+on:
+  push:
+    branches:
+      - master # 或者是 main，取决于你的主分支名字
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    concurrency: deploy-group    # 防止多个部署同时运行
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
