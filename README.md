@@ -1,17 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+
+# Today VibeEditor
+
+**AI-Powered Daily Development Report Generator**
+
+Automatically generate professional daily reports from your GitHub activity
+
 </div>
 
-# Run and deploy your AI Studio app
+## About
 
-This contains everything you need to run your app locally.
+Today VibeEditor is an AI-powered tool that helps developers automatically summarize their daily work from GitHub activity.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1VkJOGaNFShGzic-T_ZP9Lepnt4qkKSsP
+### Features
 
-## Run Locally
+- **Auto-fetch Activity** - Retrieves commits and pull requests from the last 24 hours
+- **AI Summary** - Uses Google Gemini AI to generate structured daily reports
+- **Multiple Styles** - Supports Professional, Technical, and Achievement report styles
+- **Modern UI** - Clean, responsive interface built with shadcn/ui and Pulse Beams
+- **Privacy First** - GitHub Token is never stored, API Key stays on the server
 
-**Prerequisites:**  Node.js
+### Tech Stack
 
+| Layer | Technology |
+|-------|------------|
+| Frontend | React + Vite + TypeScript + Tailwind CSS + shadcn/ui |
+| Backend | Express + Node.js + TypeScript |
+| AI | Google Gemini |
+
+---
+
+## Local Development
+
+**Requirements:** Node.js 18+
 
 1. Install dependencies:
    ```bash
@@ -19,19 +39,36 @@ View your app in AI Studio: https://ai.studio/apps/drive/1VkJOGaNFShGzic-T_ZP9Le
    cd server && npm install && cd ..
    ```
 
-2. Set the `GEMINI_API_KEY` in `server/.env` to your Gemini API key:
+2. Configure Gemini API Key:
    ```bash
-   cd server
-   echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
-   cd ..
+   echo "GEMINI_API_KEY=your_api_key_here" > server/.env
    ```
 
-3. Run the app:
+3. Start the app:
    ```bash
-   # Start both frontend and backend
    npm run dev:all
-   
-   # Or start separately:
-   # Terminal 1: npm run dev (frontend on port 3000)
-   # Terminal 2: npm run dev:server (backend on port 3001)
    ```
+
+   Frontend: http://localhost:3000
+   Backend: http://localhost:3001
+
+---
+
+## Deployment
+
+Deploy to Fly.io:
+
+```bash
+fly launch
+fly secrets set GEMINI_API_KEY=your_api_key
+fly deploy
+```
+
+---
+
+## Usage
+
+1. Enter your GitHub Personal Access Token (requires `repo` scope)
+2. Select repositories to include
+3. Choose a report style
+4. Generate and export your daily report

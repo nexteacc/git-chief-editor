@@ -7,7 +7,7 @@ export const geminiRouter = Router();
 // POST /api/gemini/report
 geminiRouter.post('/report', async (req: Request, res: Response) => {
   try {
-    const { activities, style } = req.body as GenerateReportRequest;
+    const { activities, style, language } = req.body as GenerateReportRequest;
 
     if (!activities || !Array.isArray(activities)) {
       return res.status(400).json({ error: 'Activities array is required' });
@@ -17,7 +17,11 @@ geminiRouter.post('/report', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Style is required' });
     }
 
-    const report = await generateDailyReport(activities, style);
+    if (!language) {
+      return res.status(400).json({ error: 'Language is required' });
+    }
+
+    const report = await generateDailyReport(activities, style, language);
     res.json(report);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Failed to generate report';

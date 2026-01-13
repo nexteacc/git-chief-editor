@@ -11,6 +11,16 @@ export enum SummaryStyle {
   ACHIEVEMENT = 'ACHIEVEMENT', // Highlight oriented, enthusiastic
 }
 
+export enum OutputLanguage {
+  CHINESE = 'CHINESE',
+  ENGLISH = 'ENGLISH',
+  JAPANESE = 'JAPANESE',
+  KOREAN = 'KOREAN',
+  FRENCH = 'FRENCH',
+  GERMAN = 'GERMAN',
+  SPANISH = 'SPANISH',
+}
+
 export interface GitHubEvent {
   id: string;
   type: string;
@@ -63,7 +73,6 @@ export interface DailyReport {
   keyAchievements: string[];
   repoSummaries: GeneratedRepoSummary[];
   style: SummaryStyle;
-  // 每个仓库在时间窗口内的活跃时长（单位：分钟）
   repoDurations?: RepoDuration[];
 }
 
@@ -71,4 +80,10 @@ export interface UserProfile {
   login: string;
   avatar_url: string;
   name: string;
+}
+
+export interface RepoAccessOptions {
+  publicRepos: boolean;
+  privateRepos: boolean;
+  days?: number;
 }

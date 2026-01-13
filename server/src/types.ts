@@ -1,9 +1,17 @@
-// 共享类型定义
-
 export enum SummaryStyle {
   PROFESSIONAL = 'PROFESSIONAL',
   TECHNICAL = 'TECHNICAL',
   ACHIEVEMENT = 'ACHIEVEMENT',
+}
+
+export enum OutputLanguage {
+  CHINESE = 'CHINESE',
+  ENGLISH = 'ENGLISH',
+  JAPANESE = 'JAPANESE',
+  KOREAN = 'KOREAN',
+  FRENCH = 'FRENCH',
+  GERMAN = 'GERMAN',
+  SPANISH = 'SPANISH',
 }
 
 export interface RawCommitData {
@@ -42,7 +50,6 @@ export interface DailyReport {
   keyAchievements: string[];
   repoSummaries: GeneratedRepoSummary[];
   style: SummaryStyle;
-  // 每个仓库在时间窗口内的活跃时长（单位：分钟）
   repoDurations?: RepoDuration[];
 }
 
@@ -52,17 +59,25 @@ export interface UserProfile {
   name: string;
 }
 
-// API 请求类型
+export interface RepoAccessOptions {
+  publicRepos: boolean;
+  privateRepos: boolean;
+}
+
 export interface ValidateTokenRequest {
   token: string;
+  accessOptions: RepoAccessOptions;
 }
 
 export interface FetchActivityRequest {
   token: string;
   username: string;
+  accessOptions: RepoAccessOptions;
+  days?: number; // Optional lookback period in days (default: 1)
 }
 
 export interface GenerateReportRequest {
   activities: RepoActivity[];
   style: SummaryStyle;
+  language: OutputLanguage;
 }

@@ -1,7 +1,6 @@
-import { RepoActivity, UserProfile } from '../types.js';
+import { RepoActivity, UserProfile, RepoAccessOptions } from '../types.js';
 
 const GITHUB_API_BASE = 'https://api.github.com';
-// 时间窗口：过去 24 小时的所有活动
 const LOOKBACK_HOURS = 24;
 
 const getHeaders = (token: string) => ({
@@ -10,11 +9,7 @@ const getHeaders = (token: string) => ({
   'X-GitHub-Api-Version': '2022-11-28',
 });
 
-/**
- * 验证 Token 并返回用户信息
- * 同时检查 Token 是否有 repo 权限
- */
-export const validateToken = async (token: string): Promise<UserProfile> => {
+export const validateToken = async (token: string, accessOptions: RepoAccessOptions): Promise<UserProfile> => {
   const response = await fetch(`${GITHUB_API_BASE}/user`, {
     headers: getHeaders(token),
   });
@@ -23,28 +18,30 @@ export const validateToken = async (token: string): Promise<UserProfile> => {
     throw new Error('Invalid GitHub Token. Please check your token and try again.');
   }
 
-  // 检查 Token 权限
   const scopes = response.headers.get('X-OAuth-Scopes') || '';
-  const hasRepoAccess = scopes.includes('repo') || scopes.includes('public_repo');
+  const hasRepoScope = scopes.includes('repo');
+  const hasPublicRepoScope = scopes.includes('public_repo');
 
-  if (!hasRepoAccess) {
-    throw new Error('Token missing required permissions. Please create a token with "repo" scope.');
+  // 检查用户选择的权限是否与Token权限匹配
+  if (accessOptions.privateRepos && !hasRepoScope) {
+    throw new Error('Token missing "repo" scope. Private repositories require full repo access.');
+  }
+
+  if (accessOptions.publicRepos && !hasRepoScope && !hasPublicRepoScope) {
+    throw new Error('Token missing required permissions. Please create a token with "public_repo" or "repo" scope.');
   }
 
   return response.json() as Promise<UserProfile>;
 };
 
-/**
- * 获取用户最近的活动
- */
-export const fetchRecentActivity = async (token: string, username: string): Promise<RepoActivity[]> => {
+export const fetchRecentActivity = async (token: string, username: string, accessOptions: RepoAccessOptions, days: number = 1): Promise<RepoActivity[]> => {
   const timeWindow = new Date();
-  timeWindow.setHours(timeWindow.getHours() - LOOKBACK_HOURS);
+  timeWindow.setDate(timeWindow.getDate() - days);
   const isoDate = timeWindow.toISOString();
 
-  console.log(`[GitHub Service] Fetching activity since: ${isoDate}`);
+  console.log(`[GitHub Service] Fetching activity since: ${isoDate} (Lookback: ${days} days)`);
+  console.log(`[GitHub Service] Access options: public=${accessOptions.publicRepos}, private=${accessOptions.privateRepos}`);
 
-  // 1. 获取 PRs（使用 Search API）
   const prQuery = `type:pr author:${username} updated:>${isoDate}`;
   const prUrl = `${GITHUB_API_BASE}/search/issues?q=${encodeURIComponent(prQuery)}&per_page=100`;
 
@@ -56,7 +53,6 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
 
   console.log(`[GitHub Service] Found ${rawPRs.length} updated PRs.`);
 
-  // 2. 获取活跃仓库
   const reposUrl = `${GITHUB_API_BASE}/user/repos?sort=pushed&direction=desc&per_page=100&type=all`;
   const reposResponse = await fetch(reposUrl, {
     headers: getHeaders(token),
@@ -68,14 +64,21 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
 
   const allRepos = await reposResponse.json() as any[];
 
-  // 过滤时间窗口内有活动的仓库
-  const activeRepos = allRepos.filter((repo: any) => {
+  // 根据用户选择过滤仓库类型
+  const filteredByAccess = allRepos.filter((repo: any) => {
+    if (repo.private) {
+      return accessOptions.privateRepos;
+    } else {
+      return accessOptions.publicRepos;
+    }
+  });
+
+  const activeRepos = filteredByAccess.filter((repo: any) => {
     return new Date(repo.pushed_at) > timeWindow;
   });
 
-  console.log(`[GitHub Service] Found ${activeRepos.length} repos pushed to since window.`);
+  console.log(`[GitHub Service] Found ${activeRepos.length} repos pushed to since window (filtered by user preference).`);
 
-  // 3. 并行获取每个仓库的 commits
   const repoMap = new Map<number, RepoActivity>();
 
   activeRepos.forEach((repo: any) => {
@@ -118,7 +121,6 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
 
   await Promise.all(commitPromises);
 
-  // 4. 整合 PRs
   for (const pr of rawPRs) {
     const repoNameMatch = pr.repository_url.match(/repos\/(.+?\/.+?)$/);
     const repoFullName = repoNameMatch ? repoNameMatch[1] : 'unknown/repo';
@@ -132,17 +134,10 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
       }
     }
 
+    // 只添加用户选择范围内的仓库的 PR
     if (!targetRepo) {
-      const newId = Math.floor(Math.random() * 100000);
-      targetRepo = {
-        repoId: newId,
-        repoName: repoFullName,
-        isPrivate: false,
-        commits: [],
-        prs: [],
-        eventCount: 0
-      };
-      repoMap.set(newId, targetRepo);
+      // PR 来自不在已过滤仓库列表中的仓库，跳过
+      continue;
     }
 
     const exists = targetRepo.prs.some(p => p.number === pr.number);
@@ -157,7 +152,6 @@ export const fetchRecentActivity = async (token: string, username: string): Prom
     }
   }
 
-  // 5. 过滤空结果并排序
   const results = Array.from(repoMap.values()).filter(r => r.eventCount > 0);
   results.sort((a, b) => b.eventCount - a.eventCount);
 
