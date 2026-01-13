@@ -88,21 +88,21 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isLoading, erro
           </div>
 
           <div className="space-y-6">
-            <div className="space-y-2">
-              <p className="text-xs text-gray-500 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-fit mx-auto space-y-3">
+              <p className="text-xs text-gray-600 flex items-center">
+                <svg className="w-4 h-4 mr-3 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Daily / weekly GitHub summary
               </p>
-              <p className="text-xs text-gray-500 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <p className="text-xs text-gray-600 flex items-center">
+                <svg className="w-4 h-4 mr-3 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 OAuth login, access by you
               </p>
-              <p className="text-xs text-gray-500 flex items-center">
-                <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <p className="text-xs text-gray-600 flex items-center">
+                <svg className="w-4 h-4 mr-3 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
                 Works with public & private repos
