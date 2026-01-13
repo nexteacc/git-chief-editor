@@ -1,10 +1,14 @@
 # fly.toml - Fly.io 配置文件
 # 使用 `fly launch` 时会自动生成app名称，或手动修改下面的值
 
-app = 'git-chief-editor'
+app = 'today-vibe-editor'
 primary_region = 'sin'  # 新加坡区域
 
 [build]
+
+[mounts]
+  source = "today_vibe_data"
+  destination = "/data"
 
 [http_service]
   internal_port = 8080

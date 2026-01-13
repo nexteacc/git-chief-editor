@@ -26,7 +26,7 @@ githubRouter.get('/public-repos/:username', async (req: Request, res: Response) 
       {
         headers: {
           'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Git-Chief-Editor',
+          'User-Agent': 'Today-Vibe-Editor',
         },
       }
     );

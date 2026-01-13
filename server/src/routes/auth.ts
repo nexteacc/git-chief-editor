@@ -83,7 +83,7 @@ authRouter.get('/callback', async (req: Request, res: Response) => {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'Git-Chief-Editor',
+        'User-Agent': 'Today-Vibe-Editor',
       },
     });
 
