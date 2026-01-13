@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { DailyReport, SummaryStyle } from '../types';
 import { HighlightListCard } from './ui/card-5';
 import { Sparkles } from 'lucide-react';
 import { User } from '../services/authService';
 import { Header } from './Header';
+import { Balloons } from './ui/balloons';
 
 interface DashboardProps {
   data: DailyReport;
@@ -13,6 +14,18 @@ interface DashboardProps {
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, onLogout, user }) => {
+  const balloonsRef = useRef<any>(null);
+
+  useEffect(() => {
+    // Auto-launch balloons if style is ACHIEVEMENT
+    if (data.style === SummaryStyle.ACHIEVEMENT && balloonsRef.current) {
+      // Immediate launch (tiny delay just for DOM readiness)
+      const timer = setTimeout(() => {
+        balloonsRef.current.launchAnimation();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [data.style]);
 
   const getStyleLabel = (s: SummaryStyle) => {
     switch (s) {
@@ -35,8 +48,16 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, onReset, onLogout, u
     data.repoDurations?.reduce((acc, r) => acc + (r.durationMinutes || 0), 0) ?? 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div 
+      className="min-h-screen text-gray-900 bg-gray-50"
+      style={{
+        backgroundImage: 'radial-gradient(#e5e7eb 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }}
+    >
       <Header user={user} onLogout={onLogout} />
+
+      <Balloons ref={balloonsRef} count={2} />
 
       <div className="pt-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         {/* Sub-header with date and actions */}
