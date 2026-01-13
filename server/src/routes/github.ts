@@ -126,12 +126,17 @@ githubRouter.get('/private-repos', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/github/activity
+// POST /api/github/activity - Get user's recent activity
 githubRouter.post('/activity', async (req: Request, res: Response) => {
   try {
-    // Check authentication
     if (!req.session.userId) {
       return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const { username, accessOptions, days } = req.body;
+
+    if (!username || !accessOptions) {
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const user = getUserById(req.session.userId);
@@ -139,19 +144,10 @@ githubRouter.post('/activity', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Session expired, please login again' });
     }
 
-    const { username, accessOptions } = req.body;
-
-    if (!username) {
-      return res.status(400).json({ error: 'Username is required' });
-    }
-
-    // Default access options
-    const safeAccessOptions = accessOptions || { publicRepos: true, privateRepos: false };
-
-    const activities = await fetchRecentActivity(user.access_token, username, safeAccessOptions);
+    const activities = await fetchRecentActivity(user.access_token, username, accessOptions, days || 1);
     res.json(activities);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to fetch activity';
-    res.status(500).json({ error: message });
+    console.error('Error fetching activity:', error);
+    res.status(500).json({ error: 'Failed to fetch GitHub activity' });
   }
 });

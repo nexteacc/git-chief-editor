@@ -76,3 +76,9 @@ export interface UserProfile {
   avatar_url: string;
   name: string;
 }
+
+export interface RepoAccessOptions {
+  publicRepos: boolean;
+  privateRepos: boolean;
+  days?: number;
+}

@@ -95,7 +95,7 @@ const App: React.FC = () => {
     setIsLoading(false);
   };
 
-  const handleGenerateReport = async (selectedRepos: string[], style: SummaryStyle, language: OutputLanguage) => {
+  const handleGenerateReport = async (selectedRepos: string[], style: SummaryStyle, language: OutputLanguage, days: number) => {
     if (!user) return;
 
     setIsLoading(true);
@@ -106,14 +106,14 @@ const App: React.FC = () => {
       const activities = await fetchRecentActivity(user.login, {
         publicRepos: true,
         privateRepos: hasRepoScope,
-      });
+      }, days);
 
       // Filter to only selected repos
       const selectedActivities = activities.filter(a => selectedRepos.includes(a.repoName));
 
       // If no activity found for selected repos, show error
       if (selectedActivities.length === 0) {
-        setError('No activity found in the selected repositories in the last 24 hours.');
+        setError(`No activity found in the selected repositories in the last ${days} days.`);
         setStep(AppStep.FILTER);
         return;
       }

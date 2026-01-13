@@ -1,5 +1,5 @@
 
-# Today Git Chief Editor
+# Today VibeEditor
 
 **AI-Powered Daily Development Report Generator**
 
@@ -9,7 +9,7 @@ Automatically generate professional daily reports from your GitHub activity
 
 ## About
 
-Today Git Chief Editor is an AI-powered tool that helps developers automatically summarize their daily work from GitHub activity.
+Today VibeEditor is an AI-powered tool that helps developers automatically summarize their daily work from GitHub activity.
 
 ### Features
 

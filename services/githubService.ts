@@ -36,6 +36,6 @@ export const fetchPrivateRepos = async (): Promise<RepoInfo[]> => {
  * Get user's recent activity
  * Token is retrieved from session on the backend
  */
-export const fetchRecentActivity = async (username: string, accessOptions: RepoAccessOptions): Promise<RepoActivity[]> => {
-  return apiPost<RepoActivity[]>('/github/activity', { username, accessOptions });
+export const fetchRecentActivity = async (username: string, accessOptions: RepoAccessOptions, days: number = 1): Promise<RepoActivity[]> => {
+  return apiPost<RepoActivity[]>('/github/activity', { username, accessOptions, days });
 };

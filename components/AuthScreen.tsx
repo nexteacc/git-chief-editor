@@ -83,7 +83,7 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isLoading, erro
               </div>
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-2">
-              Today Git Chief Editor
+              Today VibeEditor
             </h1>
             <p className="text-gray-600">An AI-powered daily editor for your GitHub work.</p>
           </div>

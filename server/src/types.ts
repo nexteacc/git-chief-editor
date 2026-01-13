@@ -68,6 +68,7 @@ export interface FetchActivityRequest {
   token: string;
   username: string;
   accessOptions: RepoAccessOptions;
+  days?: number; // Optional lookback period in days (default: 1)
 }
 
 export interface GenerateReportRequest {

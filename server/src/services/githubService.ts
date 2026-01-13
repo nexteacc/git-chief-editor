@@ -34,12 +34,12 @@ export const validateToken = async (token: string, accessOptions: RepoAccessOpti
   return response.json() as Promise<UserProfile>;
 };
 
-export const fetchRecentActivity = async (token: string, username: string, accessOptions: RepoAccessOptions): Promise<RepoActivity[]> => {
+export const fetchRecentActivity = async (token: string, username: string, accessOptions: RepoAccessOptions, days: number = 1): Promise<RepoActivity[]> => {
   const timeWindow = new Date();
-  timeWindow.setHours(timeWindow.getHours() - LOOKBACK_HOURS);
+  timeWindow.setDate(timeWindow.getDate() - days);
   const isoDate = timeWindow.toISOString();
 
-  console.log(`[GitHub Service] Fetching activity since: ${isoDate}`);
+  console.log(`[GitHub Service] Fetching activity since: ${isoDate} (Lookback: ${days} days)`);
   console.log(`[GitHub Service] Access options: public=${accessOptions.publicRepos}, private=${accessOptions.privateRepos}`);
 
   const prQuery = `type:pr author:${username} updated:>${isoDate}`;

@@ -87,7 +87,7 @@ export const generateDailyReport = async (
   }));
 
   const prompt = `## Role
-You are "Today Git Chief Editor", a personal editor assistant for developers.
+You are "Today VibeEditor", a personal editor assistant for developers.
 
 ## Task
 Analyze the following GitHub activity from the past 24 hours and generate a daily work summary report.

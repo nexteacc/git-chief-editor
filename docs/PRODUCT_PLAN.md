@@ -1,4 +1,4 @@
-# Git Chief Editor - 完整产品规划
+# Today VibeEditor - 完整产品规划
 
 > 文档版本: v1.0
 > 更新日期: 2026-01-11
