@@ -124,7 +124,7 @@ ${JSON.stringify(dataInput, null, 2)}
     console.log('[Gemini Service] Generating report...');
 
     const response = await ai.models.generateContent({
-      model: "gemini-3.0-flash",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
