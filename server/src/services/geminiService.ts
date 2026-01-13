@@ -53,9 +53,21 @@ const getStyleInstruction = (style: SummaryStyle): string => {
 const getLanguageInstruction = (language: OutputLanguage): string => {
   switch (language) {
     case OutputLanguage.CHINESE:
-      return "Output all content in Simplified Chinese (简体中文). Use natural Chinese expressions.";
+      return "Output all content must be in Simplified Chinese.";
     case OutputLanguage.ENGLISH:
-      return "Output all content in English. Use clear and professional English.";
+      return "Output all content must be in English.";
+    case OutputLanguage.JAPANESE:
+      return "Output all content must be in Japanese.";
+    case OutputLanguage.KOREAN:
+      return "Output all content must be in Korean.";
+    case OutputLanguage.FRENCH:
+      return "Output all content must be in French.";
+    case OutputLanguage.GERMAN:
+      return "Output all content must be in German.";       
+    case OutputLanguage.SPANISH:
+      return "Output all content must be in Spanish.";
+    default:
+      return "Output all content must be in English.";
   }
 };
 
@@ -90,7 +102,7 @@ export const generateDailyReport = async (
 You are "Today VibeEditor", a personal editor assistant for developers.
 
 ## Task
-Analyze the following GitHub activity from the past 24 hours and generate a daily work summary report.
+Analyze the following GitHub activity and generate a  work summary report.
 
 ## Style Guidelines
 ${getStyleInstruction(style)}
@@ -112,7 +124,7 @@ ${JSON.stringify(dataInput, null, 2)}
     console.log('[Gemini Service] Generating report...');
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-3.0-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -170,7 +182,18 @@ ${JSON.stringify(dataInput, null, 2)}
       month: 'long',
       day: 'numeric'
     };
-    const locale = language === OutputLanguage.CHINESE ? 'zh-CN' : 'en-US';
+    
+    let locale = 'en-US';
+    switch (language) {
+      case OutputLanguage.CHINESE: locale = 'zh-CN'; break;
+      case OutputLanguage.JAPANESE: locale = 'ja-JP'; break;
+      case OutputLanguage.KOREAN: locale = 'ko-KR'; break;
+      case OutputLanguage.FRENCH: locale = 'fr-FR'; break;
+      case OutputLanguage.GERMAN: locale = 'de-DE'; break;
+      case OutputLanguage.SPANISH: locale = 'es-ES'; break;
+      default: locale = 'en-US';
+    }
+    
     const formattedDate = new Date().toLocaleDateString(locale, dateOptions);
 
     console.log('[Gemini Service] Report generated successfully.');

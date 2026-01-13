@@ -324,8 +324,13 @@ export const RepoFilter: React.FC<RepoFilterProps> = ({
               <div className="w-full">
                 <DropdownComponent
                   options={[
-                    { id: OutputLanguage.CHINESE, label: '中文', description: 'Simplified Chinese' },
-                    { id: OutputLanguage.ENGLISH, label: 'English', description: 'English' },
+                    { id: OutputLanguage.CHINESE, label: '简体中文' },
+                    { id: OutputLanguage.ENGLISH, label: 'English' },
+                    { id: OutputLanguage.FRENCH, label: 'Français' },
+                    { id: OutputLanguage.GERMAN, label: 'Deutsch' },
+                    { id: OutputLanguage.JAPANESE, label: '日本語' },
+                    { id: OutputLanguage.KOREAN, label: '한국어' },
+                    { id: OutputLanguage.SPANISH, label: 'Español' },
                   ]}
                   value={selectedLanguage}
                   onChange={setSelectedLanguage}

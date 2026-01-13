@@ -14,6 +14,11 @@ export enum SummaryStyle {
 export enum OutputLanguage {
   CHINESE = 'CHINESE',
   ENGLISH = 'ENGLISH',
+  JAPANESE = 'JAPANESE',
+  KOREAN = 'KOREAN',
+  FRENCH = 'FRENCH',
+  GERMAN = 'GERMAN',
+  SPANISH = 'SPANISH',
 }
 
 export interface GitHubEvent {
