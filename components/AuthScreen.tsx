@@ -85,28 +85,27 @@ export const AuthScreen: React.FC<AuthScreenProps> = ({ onLogin, isLoading, erro
             <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-2">
               Today VibeEditor
             </h1>
-            <p className="text-gray-600">An AI-powered daily editor for your GitHub work.</p>
           </div>
 
           <div className="space-y-6">
-            <div className="space-y-3">
+            <div className="space-y-2">
               <p className="text-xs text-gray-500 flex items-center">
                 <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Only read your last 24 hours of activity
+                Daily / weekly GitHub summary
               </p>
               <p className="text-xs text-gray-500 flex items-center">
                 <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Secure OAuth login - no token stored in browser
+                OAuth login, access by you
               </p>
               <p className="text-xs text-gray-500 flex items-center">
                 <svg className="w-4 h-4 mr-2 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
-                Only requests basic user info - no repo access
+                Works with public & private repos
               </p>
             </div>
 
