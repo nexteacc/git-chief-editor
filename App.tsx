@@ -4,6 +4,7 @@ import { RepoFilter } from './components/RepoFilter';
 import { LoadingScreen } from './components/LoadingScreen';
 import { Dashboard } from './components/Dashboard';
 import { fetchPublicRepos, fetchPrivateRepos, fetchRecentActivity, RepoInfo } from './services/githubService';
+import { Footer } from './components/Footer';
 import { generateDailyReport } from './services/geminiService';
 import { getCurrentUser, redirectToLogin, logout, User, UserPreferences } from './services/authService';
 import { AppStep, DailyReport, SummaryStyle, OutputLanguage } from './types';
@@ -153,38 +154,41 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 selection:bg-gray-200 selection:text-black">
-      {step === AppStep.AUTH && (
-        <AuthScreen
-          onLogin={handleLogin}
-          isLoading={isLoading}
-          error={error}
-        />
-      )}
+    <div className="min-h-screen bg-white text-gray-900 selection:bg-gray-200 selection:text-black flex flex-col">
+      <div className="flex-1">
+        {step === AppStep.AUTH && (
+          <AuthScreen
+            onLogin={handleLogin}
+            isLoading={isLoading}
+            error={error}
+          />
+        )}
 
-      {step === AppStep.FILTER && user && (
-        <RepoFilter
-          publicRepos={publicRepos}
-          privateRepos={privateRepos}
-          user={user}
-          onLogout={handleLogout}
-          onGenerate={handleGenerateReport}
-          hasRepoScope={hasRepoScope}
-        />
-      )}
+        {step === AppStep.FILTER && user && (
+          <RepoFilter
+            publicRepos={publicRepos}
+            privateRepos={privateRepos}
+            user={user}
+            onLogout={handleLogout}
+            onGenerate={handleGenerateReport}
+            hasRepoScope={hasRepoScope}
+          />
+        )}
 
-      {step === AppStep.PROCESSING && (
-        <LoadingScreen />
-      )}
+        {step === AppStep.PROCESSING && (
+          <LoadingScreen />
+        )}
 
-      {step === AppStep.DASHBOARD && reportData && user && (
-        <Dashboard
-          data={reportData}
-          onReset={handleReset}
-          onLogout={handleLogout}
-          user={user}
-        />
-      )}
+        {step === AppStep.DASHBOARD && reportData && user && (
+          <Dashboard
+            data={reportData}
+            onReset={handleReset}
+            onLogout={handleLogout}
+            user={user}
+          />
+        )}
+      </div>
+      <Footer />
     </div>
   );
 };
